@@ -1,0 +1,28 @@
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# SQLite database
+users.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# IDE directories
+.vscode/
+.idea/
+
+# MacOS specific files
+.DS_Store
+
+# Others
+*.swp
