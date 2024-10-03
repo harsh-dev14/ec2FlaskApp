@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
+import sqlite3,os
 
 app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
+db_path=os.path.join(basedir,'users.db')
 
 # SQLite setup function
 def init_db():
-    db_path = '/home/ubuntu/ec2FlaskApp/users.db'  # Use absolute path
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS users 
@@ -61,7 +62,7 @@ def register():
         conn = None  # Initialize conn to None
         try:
             # Save to SQLite3 Database
-            conn = sqlite3.connect('/home/ubuntu/ec2FlaskApp/users.db')
+            conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
             cursor.execute(
                 "INSERT INTO users (username, password, firstname, lastname, email) VALUES (?, ?, ?, ?, ?)",
@@ -82,12 +83,28 @@ def register():
 
 @app.route('/profile/<username>')
 def profile(username):
-    conn = sqlite3.connect('/home/ubuntu/ec2FlaskApp/users.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("SELECT * FROM users WHERE username=?", (username,))
     user = c.fetchone()
     conn.close()
     return render_template('profile.html', user=user)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save('Limerick-1.txt')
+        return redirect(url_for('success'))
+    return render_template('upload.html')
+
+@app.route('/success')
+def success():
+    with open('Limerick-1.txt', 'r') as file:
+        content = file.read()
+        word_count = len(content.split())
+    return render_template('success.html', first_name=first_name, last_name=last_name, email=email, word_count=word_count)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
