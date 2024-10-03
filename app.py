@@ -40,7 +40,7 @@ def login():
         conn.close()
 
         if user:
-            return f"Welcome {user[2]} {user[3]}, Email: {user[4]}"
+            return f"Welcome {user[3]} {user[4]}, Email: {user[5]}"
         else:
             return "Login failed, please try again."
     
